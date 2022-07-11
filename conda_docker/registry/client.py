@@ -1,4 +1,5 @@
 from urllib.request import Request, urlopen
+import requests
 import json
 import tarfile
 import io
@@ -10,12 +11,9 @@ from conda_docker.docker.base import Image, Layer
 def get_request(url, headers=None):
     headers = headers or {}
 
-    request = Request(url)
-    for key, value in headers.items():
-        request.add_header(key, value)
-
-    return urlopen(request).read()
-
+    res = requests.get(url, headers=headers)
+    res.raise_for_status()
+    return res.content
 
 def get_token(scope="repository:library/ubuntu:pull"):
     url = f"https://auth.docker.io/token?service=registry.docker.io&scope={scope}"
